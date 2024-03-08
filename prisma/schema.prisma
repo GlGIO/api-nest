@@ -1,0 +1,20 @@
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "sqlserver"
+    url      = env("DATABASE_URL")
+}
+
+model User {
+    id        Int       @id(map: "PK__users__3213E83F7AE3F542") @default(autoincrement())
+    name      String    @db.VarChar(63)
+    email     String    @db.VarChar(127)
+    password  String    @db.VarChar(127)
+    birthDate DateTime? @db.Date
+    createdAt DateTime  @default(now(), map: "DF__users__createdAt__36B12243") @db.DateTime
+    updatedAt DateTime  @default(now(), map: "DF__users__updatedAt__37A5467C") @db.DateTime
+
+    @@map("users")
+}
