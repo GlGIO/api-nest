@@ -46,6 +46,6 @@ export class UserController {
 
 	@Delete(":id")
 	async remove(@Param("id", ParseIntPipe) id: number) {
-		return { id };
+		return this.userService.remove(id);
 	}
 }
