@@ -29,10 +29,14 @@ export class UserService {
 	}
 
 	async findAll(){
+		
 		return await this.prisma.user.findMany();
 	}
 
 	async findOne(id: number){
+
+		await this.exists(id);
+
 		return await this.prisma.user.findUnique({
 			where: {
 				id
@@ -94,7 +98,11 @@ export class UserService {
 	}
 
 	async exists(id: number){
-		if(!(await this.findOne(id))){
+		if(!(await this.prisma.user.count({
+			where: {
+				id
+			}
+		}))){
 			throw new NotFoundException("User not found");
 		}
 	}

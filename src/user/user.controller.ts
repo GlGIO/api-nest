@@ -1,18 +1,9 @@
-import {
-	Body,
-	Controller,
-	Delete,
-	Get,
-	Param,
-	ParseIntPipe,
-	Patch,
-	Post,
-	Put,
-} from "@nestjs/common";
+import {Body,Controller,Delete,Get,Patch,Post,Put} from "@nestjs/common";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { UpdateParcialUserDto } from "./dto/updateparcial-user.dto";
 import { UserService } from "./user.service";
+import { ParamId } from "src/decorators/param-id.decorato";
 
 @Controller("users")
 export class UserController {
@@ -25,7 +16,7 @@ export class UserController {
 	}
 
 	@Get(":id")
-	async findOne(@Param ("id", ParseIntPipe) id: number,) {
+	async findOne(@ParamId() id: number,) {
 		return this.userService.findOne(id);
 	}
 
@@ -35,17 +26,17 @@ export class UserController {
 	}
 
 	@Put(":id")
-	async update(@Param("id", ParseIntPipe) id: number, @Body() data: UpdateUserDto) {
+	async update(@ParamId() id: number, @Body() data: UpdateUserDto) {
 		return this.userService.update(id, data);
 	}
 
 	@Patch(":id")
-	async updatePartial(@Param("id", ParseIntPipe) id: number, @Body() data: UpdateParcialUserDto) {
+	async updatePartial(@ParamId() id: number, @Body() data: UpdateParcialUserDto) {
 		return this.userService.updatePartial(id, data);
 	}
 
 	@Delete(":id")
-	async remove(@Param("id", ParseIntPipe) id: number) {
+	async remove(@ParamId() id: number) {
 		return this.userService.remove(id);
 	}
 }
