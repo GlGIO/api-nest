@@ -3,14 +3,18 @@ import { CreateUserDto } from "./dto/create-user.dto";
 import { PrismaService } from "src/prisma/prisma.service";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { UpdateParcialUserDto } from "./dto/updateparcial-user.dto";
-
+import * as bcrypt from "bcrypt";
+import { SkipThrottle } from "@nestjs/throttler";
 
 @Injectable()
 export class UserService {
 
 	constructor(private readonly prisma : PrismaService){}
 
+	@SkipThrottle()
 	async create(data : CreateUserDto){
+
+		data.password = await bcrypt.hash(data.password, 10);
 		
 		const dataWithConvertedDate = {
 			...data,
@@ -21,10 +25,6 @@ export class UserService {
 			data: 
 				dataWithConvertedDate,
 			
-			select: {
-				id: true,
-				name: true
-			}
 		});
 	}
 
@@ -44,9 +44,11 @@ export class UserService {
 		});
 	}
 
-	async update(id: number, {name,password,email,birthDate}: UpdateUserDto){
+	async update(id: number, {name,password,email,birthDate,role}: UpdateUserDto){
 
 		await this.exists(id);
+
+		password = await bcrypt.hash(password, 10);
 
 		if(!birthDate) { 
 			birthDate = null;
@@ -59,13 +61,14 @@ export class UserService {
 				name,
 				email,
 				password,
-				birthDate: birthDate ? new Date(birthDate) : null
+				birthDate: birthDate ? new Date(birthDate) : null,
+				role
 				
 			}
 		});
 	}
 
-	async updatePartial(id: number, {name,password,email,birthDate}: UpdateParcialUserDto){
+	async updatePartial(id: number, {name,password,email,birthDate, role}: UpdateParcialUserDto){
 		
 		await this.exists(id);
 
@@ -74,8 +77,9 @@ export class UserService {
 
 		if(name) data.name = name;
 		if(email) data.email = email;
-		if(password) data.password = password;
+		if(password) data.password =  await bcrypt.hash(password, 10);
 		if(birthDate) data.birthDate = new Date(birthDate);
+		if(role) data.role = role;
 		
 
 		return await this.prisma.user.update({

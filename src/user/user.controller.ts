@@ -1,10 +1,16 @@
-import {Body,Controller,Delete,Get,Patch,Post,Put} from "@nestjs/common";
+import {Body,Controller,Delete,Get,Patch,Post,Put, UseGuards} from "@nestjs/common";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { UpdateParcialUserDto } from "./dto/updateparcial-user.dto";
 import { UserService } from "./user.service";
-import { ParamId } from "src/decorators/param-id.decorato";
+import { ParamId } from "src/decorators/param-id.decorator";
+import { Role } from "src/enums/role.enum";
+import { Roles } from "src/decorators/roles.decorator";
+import { RuleGuard } from "src/guards/rule.guard";
+import { AuthGuard } from "src/guards/auth.guard";
 
+@Roles(Role.ADMIN)
+@UseGuards(AuthGuard, RuleGuard)
 @Controller("users")
 export class UserController {
 
